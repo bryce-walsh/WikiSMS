@@ -2,6 +2,7 @@ from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
 from sms_send import make_client
+from backend import *
 
 app = Flask(__name__)
 
