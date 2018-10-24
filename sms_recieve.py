@@ -21,6 +21,12 @@ def pull_incoming_number():
 	number = recent_messages[0].from_
 	return number
 
+def process_message(message):
+	title, type_,category,hint = message.split("\n");
+	scrape_wiki(title, type_, category, hint);
+
+
 # For Testing Purposes:
 # print(pull_incoming_message())
 # print(pull_incoming_number())
+
