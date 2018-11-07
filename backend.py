@@ -1,6 +1,8 @@
 from mediawiki import MediaWiki
 from bs4 import BeautifulSoup
+import pprint
 
+pp = pprint.PrettyPrinter(indent=4)
 wikipedia = MediaWiki()
 
 #Returns the first 160 characters of the given query page if it exists
@@ -20,7 +22,6 @@ def check_sidebar(title, hint):
 #of the given page's infobox and the values are the values
 def parse_infobox(title):
 	page = wikipedia.page(title)
-
 	soup = BeautifulSoup(page.html, 'html.parser')
 	info = soup.find('table', {'class': 'infobox'})
 	#Inspired by the answer on:
@@ -33,8 +34,8 @@ def parse_infobox(title):
 		if parameter != None:
 			value = row.find('td')
 			if value != None:
-				parameter = parameter.text.strip()
-				value = value.text.strip()
+				parameter = parameter.get_text(" ", strip=True)
+				value = value.get_text(" ",strip=True)
 				infobox[parameter] = value
 	return infobox
 
