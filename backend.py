@@ -46,8 +46,9 @@ def sidebar_parameters(title):
 def scrape_wiki(title, type_, category, hint):
  	return check_sidebar(title,hint)
 
-print("Sidebar fields for Tufts University:")
-print(sidebar_parameters("Tufts University"))
-print()
-print("Tufts University Motto:")
-print(check_sidebar("Tufts University", "Motto"))
+#Example use
+#print("Sidebar fields for Tufts University:")
+#print(sidebar_parameters("Tufts University"))
+#print()
+#print("Tufts University Motto:")
+#print(check_sidebar("Tufts University", "Motto"))
