@@ -16,6 +16,11 @@ def sidebar_parameters(title):
 	infobox = parse_infobox(title)
 	return list(infobox.keys())
 
+#Returns a list of the subject headings for the given page
+def subject_headings(title):
+	page = wikipedia.page(title)
+	return page.sections
+
 #Searches the sidebar of the page with the given title and 
 #Returns the string associated with the hint if one is found
 def check_sidebar(title, hint):
@@ -29,10 +34,7 @@ def check_sidebar(title, hint):
 def search_main_text(title, hint):
 	page = wikipedia.page(title)
 	content = page.content
-	#content = "Text text text text text text text text text text text textt asdlkfjlasdfjasldfjsdlfjasl study abroad djfslkdfjalsdjflaskdjflskdjflaskjdflskdjflsakdfjlksdfj   ljhjll asdojfaos sd foasjdfoasjdf saodfjasoidfjasodf aso df"
 	contentLength = len(content)
-	#print(contentLength)
-	#print(range(80, contentLength - 80))
 	for i in range(80,contentLength - 80):
 		candidate = content[i-80:i+80]
 		candidateLength = len(candidate)
