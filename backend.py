@@ -7,8 +7,8 @@ wikipedia = MediaWiki()
 
 #Returns the first 160 characters of the given query page if it exists
 def get_first_160(query):
-  page = wikipedia.page(query)
-  return page.summarize(chars=160)
+	page = wikipedia.page(query)
+	return page.summarize(chars=160)
 
 #Returns the fields for which there is information in the infobox of the
 #page
@@ -31,7 +31,7 @@ def check_sidebar(title, hint):
 
 #Searches the main text of the page and makes a best guess
 #as to what 160 char response is most likely to contain the information
-def search_main_text(title, hint):
+def search_main_text(title, hint, heading = None):
 	page = wikipedia.page(title)
 	content = page.content
 	contentLength = len(content)
@@ -73,6 +73,6 @@ def parse_infobox(title):
 #print(check_sidebar("Tufts University", "Motto"))
 #print()
 
-#title = input("Please enter page title: ")
-#hint = input("What would you like to know about? ")
-#print(search_main_text(title, hint))
+title = input("Please enter page title: ")
+hint = input("What would you like to know about? ")
+print(search_main_text(title, hint))
