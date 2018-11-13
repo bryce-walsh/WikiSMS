@@ -26,9 +26,21 @@ def check_sidebar(title, hint):
 
 #Searches the main text of the page and makes a best guess
 #as to what 160 char response is most likely to contain the information
-#CURRENTLY JUST RETURNS THE FIRST 160 CHARS OF THE SUMMARY
 def search_main_text(title, hint):
-	return get_first_160(title)
+	page = wikipedia.page(title)
+	content = page.content
+	#content = "Text text text text text text text text text text text textt asdlkfjlasdfjasldfjsdlfjasl study abroad djfslkdfjalsdjflaskdjflskdjflaskjdflskdjflsakdfjlksdfj   ljhjll asdojfaos sd foasjdfoasjdf saodfjasoidfjasodf aso df"
+	contentLength = len(content)
+	print(contentLength)
+	print(range(80, contentLength - 80))
+	for i in range(80,contentLength - 80):
+		candidate = content[i-80:i+80]
+		candidateLength = len(candidate)
+		middleBegin = int(((candidateLength/2) - 10))
+		middleEnd = int(((candidateLength/2) + 10))
+		middle = candidate[middleBegin:middleEnd]
+		if middle.find(hint) != -1:
+			return candidate
 
 #Returns a dictionary where the keys are the parameters
 #of the given page's infobox and the values are the values
@@ -59,4 +71,4 @@ def parse_infobox(title):
 #print(check_sidebar("Tufts University", "Motto"))
 #print()
 #print("Main text response for hint \"cannon\"")
-#print(search_main_text("Tufts University", "cannon"))
+print(search_main_text("Tufts University", "study abroad"))
