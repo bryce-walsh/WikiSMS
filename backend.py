@@ -31,8 +31,8 @@ def search_main_text(title, hint):
 	content = page.content
 	#content = "Text text text text text text text text text text text textt asdlkfjlasdfjasldfjsdlfjasl study abroad djfslkdfjalsdjflaskdjflskdjflaskjdflskdjflsakdfjlksdfj   ljhjll asdojfaos sd foasjdfoasjdf saodfjasoidfjasodf aso df"
 	contentLength = len(content)
-	print(contentLength)
-	print(range(80, contentLength - 80))
+	#print(contentLength)
+	#print(range(80, contentLength - 80))
 	for i in range(80,contentLength - 80):
 		candidate = content[i-80:i+80]
 		candidateLength = len(candidate)
@@ -70,5 +70,7 @@ def parse_infobox(title):
 #print("Tufts University Motto:")
 #print(check_sidebar("Tufts University", "Motto"))
 #print()
-#print("Main text response for hint \"cannon\"")
-print(search_main_text("Tufts University", "study abroad"))
+
+#title = input("Please enter page title: ")
+#hint = input("What would you like to know about? ")
+#print(search_main_text(title, hint))
