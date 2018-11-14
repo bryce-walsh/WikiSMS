@@ -33,7 +33,22 @@ def check_sidebar(title, hint):
 #as to what 160 char response is most likely to contain the information
 def search_main_text(title, hint, heading = None):
 	page = wikipedia.page(title)
-	content = page.content
+	if heading:
+		content = page.section(heading)
+		result = search_content(content, hint)
+		if result:
+			return result
+		else:
+			content = page.content
+	else:
+		content = page.content
+	result = search_content(content, hint)
+	if result:
+		return result
+	else:
+		return "The information was not found"
+
+def search_content(content, hint):
 	contentLength = len(content)
 	for i in range(80,contentLength - 80):
 		candidate = content[i-80:i+80]
@@ -41,9 +56,8 @@ def search_main_text(title, hint, heading = None):
 		middleBegin = int(((candidateLength/2) - 10))
 		middleEnd = int(((candidateLength/2) + 10))
 		middle = candidate[middleBegin:middleEnd]
-		if middle.find(hint) != -1:
+		if middle.lower().find(hint.lower()) != -1:
 			return candidate
-
 #Returns a dictionary where the keys are the parameters
 #of the given page's infobox and the values are the values
 def parse_infobox(title):
@@ -73,6 +87,19 @@ def parse_infobox(title):
 #print(check_sidebar("Tufts University", "Motto"))
 #print()
 
-title = input("Please enter page title: ")
-hint = input("What would you like to know about? ")
-print(search_main_text(title, hint))
+# title = input("Please enter page title: ")
+# sidebarOrMain = input("Do you think the information is in the sidebar (S) or the main text (T)? ")
+# if sidebarOrMain == "S":
+# 	print("These are the sidebar parameters for this page: ")
+# 	pp.pprint(sidebar_parameters(title))
+# 	hint = input ("Which parameter do you want the value for? ")
+# 	print(check_sidebar(title, hint))
+# elif sidebarOrMain == "T":
+# 	print("These are the section headings for this page:")
+# 	pp.pprint(subject_headings(title))
+# 	heading = input("Which heading do you think contains the information? ")
+# 	hint = input("What infomation are you looking for? ")
+# 	print(search_main_text(title, hint, heading))
+# else:
+# 	print("Please try again")
+
