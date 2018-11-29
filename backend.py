@@ -58,6 +58,7 @@ def search_content(content, hint):
 		middle = candidate[middleBegin:middleEnd]
 		if middle.lower().find(hint.lower()) != -1:
 			return candidate
+
 #Returns a dictionary where the keys are the parameters
 #of the given page's infobox and the values are the values
 def parse_infobox(title):
@@ -75,6 +76,7 @@ def parse_infobox(title):
 			value = row.find('td')
 			if value != None:
 				parameter = parameter.get_text(" ", strip=True)
+				parameter = parameter.replace("\xa0", ' ')
 				value = value.get_text(" ",strip=True)
 				infobox[parameter] = value
 	return infobox
@@ -102,4 +104,3 @@ def parse_infobox(title):
 # 	print(search_main_text(title, hint, heading))
 # else:
 # 	print("Please try again")
-
