@@ -41,11 +41,6 @@ def sms_goodbye_message():
 	resp.message(str(const.GOODBYE_MESSAGE))
 	return str(resp)
 
-def sms_resend_most_recent_message_reply(recent_messages):
-	resp = MessagingResponse()
-	resp.message(str(recent_messages[0].body))
-	return str(resp)
-
 '''
 sms_sidebar_reply function
 Parameters: string for the title to search Wikipedia for
@@ -106,8 +101,12 @@ Purpose: Compiles the message that will be sent back to the user for the results
 '''
 def compile_results(title, query, info):
 	response = const.RESULTS + const.SPACE + const.NEW_LINE + const.TITLE\
-			 + title + const.NEW_LINE + const.QUERY + query + const.NEW_LINE\
-			 + const.RESULT + info + const.NEW_LINE + const.SEARCH_AGAIN
+			 + title + const.NEW_LINE + const.QUERY + query + const.NEW_LINE
+	if(info == None):
+		response = response + const.RESULT + query + const.NO_INFO + title
+	else:
+		response = response + const.RESULT + info
+	response = response + const.NEW_LINE + const.SEARCH_AGAIN
 	return response 
 
 '''
