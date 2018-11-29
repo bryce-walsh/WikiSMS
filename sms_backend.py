@@ -1,10 +1,9 @@
-# Functions module associated with backend communications to the frontend
+# Functions module associated with backend communications to the user
 
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
-from backend import sidebar_parameters
-from backend import check_sidebar
+import backend as be
 import backend_constants as const
 
 '''
@@ -20,35 +19,111 @@ def make_client():
 	return client
 
 '''
-sms_first_reply function
-Parameters: string for the title to search wikipedia for
+sms_welcome_message function
+Parameters: None
+Returns: String for the response message to send to the front end
+Purpose: Sends the intiial welcome message to the user 
+		 with instructions for how to proceed
+'''
+def sms_welcome_message():
+	resp = MessagingResponse()
+	resp.message(str(const.WELCOME_MESSAGE))
+	return str(resp)
+
+'''
+sms_goodbye_message function
+Parameters: None
+Returns: String for the response message to send to the front end
+Purpose: Sends the final goodbye message
+'''
+def sms_goodbye_message():
+	resp = MessagingResponse()
+	resp.message(str(const.GOODBYE_MESSAGE))
+	return str(resp)
+
+def sms_resend_most_recent_message_reply(recent_messages):
+	resp = MessagingResponse()
+	resp.message(str(recent_messages[0].body))
+	return str(resp)
+
+'''
+sms_sidebar_reply function
+Parameters: string for the title to search Wikipedia for
 Returns: string for the response to send to the front end
-Purpose: Pulls the infobox keywords from the wikipedia page 
+Purpose: Pulls the infobox keywords from the Wikipedia page 
 		 associated with the passed in title and sends the
 		 information back to the front end
 '''
-def sms_first_reply(title):
-	keywords = sidebar_parameters(title)
-	options = ''
-	for keyword in keywords:
-		options = keyword + const.NEW_LINE + options
+def sms_sidebar_reply(title):
 	resp = MessagingResponse()
-	resp.message(str(options))
+	try:
+		keywords = be.sidebar_parameters(title)
+		options = const.EMPTY
+		for keyword in keywords:
+			options = keyword + const.NEW_LINE + options
+		options = options + const.OTHER
+		options = const.INFO_MESSAGE + options
+		resp.message(str(options))
+	except:
+		resp.message(str(const.PAGE_NOT_FOUND))
+	return str(resp)
+
+'''
+get_query_reply function
+Parameters: None
+Returns: string for the response to send to the front end
+Purpose: Sends a message to the front end asking for the phrase
+		 to search the main text for
+'''
+def sms_get_query_reply():
+	resp = MessagingResponse()
+	resp.message(str(const.QUERY_MESSAGE))
 	return str(resp)
 
 '''
 sms_second_reply function
 Parameters: string for the title to search wikipedia for
-			string for the hint to search the given page for
+			string for the query to search the given page for
 Returns: string for the response to send to the front end
-Purpose: Pulls the infobrmation related to the passed in hint on the
+Purpose: Pulls the infobrmation related to the passed in query on the
 		 passed in wikipedia page and send the information back to the 
 		 front end
 '''
-def sms_second_reply(title, hint):
+def sms_search_infobox_reply(title, query):
 	resp = MessagingResponse()
-	info = check_sidebar(title, hint)
-	resp.message(str(info))
+	info = be.check_sidebar(title, query)
+	response = compile_results(title, query, info)
+	resp.message(str(response))
+	return str(resp)
+
+'''
+compile_results function
+Parameters: string for the title to search Wikipedia for
+			string for the query that was searched for on the title page
+			string for the results returned from the user requested search
+Returns: string for the results that will be sent back to the user
+Purpose: Compiles the message that will be sent back to the user for the results
+'''
+def compile_results(title, query, info):
+	response = const.RESULTS + const.SPACE + const.NEW_LINE + const.TITLE\
+			 + title + const.NEW_LINE + const.QUERY + query + const.NEW_LINE\
+			 + const.RESULT + info + const.NEW_LINE + const.SEARCH_AGAIN
+	return response 
+
+'''
+sms_search_main_text_reply function
+Parameters: string for the title to search Wikipedia for
+			string for the hint to search the main text for
+			string for the heading to search within the title page
+Returns: string for the response to send to the front end
+Purpose: Searches the heading within the title page for the hint
+		 and sends the information back to the front end
+'''
+def sms_search_main_text_reply(title, hint):
+	info = be.search_main_text(title, hint)
+	response = compile_results(title, hint, info)
+	resp = MessagingResponse()
+	resp.message(str(response))
 	return str(resp)
 
 '''
