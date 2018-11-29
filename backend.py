@@ -26,7 +26,7 @@ def subject_headings(title):
 def check_sidebar(title, hint):
 	infobox = parse_infobox(title)
 	for key in infobox.keys():
-		if hint in key:
+		if hint.lower() in key.lower():
 			return infobox[key]
 
 #Searches the main text of the page and makes a best guess
@@ -43,10 +43,7 @@ def search_main_text(title, hint, heading = None):
 	else:
 		content = page.content
 	result = search_content(content, hint)
-	if result:
-		return result
-	else:
-		return "The information was not found"
+	return result
 
 def search_content(content, hint):
 	contentLength = len(content)
