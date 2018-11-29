@@ -1,11 +1,53 @@
-# Module of constants
+# Constants Module
 
-NEW_LINE = '\n'							   # New line character 
-SID = 'ACace136eec48e0b51b54ccadc38236267' # Twilio account sid
-TOKEN = 'f4a9b76b529979805290c0c8beb60771' # Twilio authentication token
-BACK_END_NUMBER = '14703750399'			   # Backend Twilio phone number
-FRONT_END_NUMBER = '17706299609'		   # Frontend Twilio phone number
-TITLE = 'TITLE'					# Keyword to distinguish first sms from second
-KEYWORD_START = 0				# First character of Keyword
-KEYWORD_END = 5					# Index of last character of the keyword
-MESSAGE_START = 6				# Index of first character of actual message
+# Twilio Constants 
+SID = "AC520affbaf6ae1ee496f05abfc2fba256" # Twilio account sid
+TOKEN = "342cd21959401510580ee307c13b930e" # Twilio authentication token
+BACK_END_NUMBER = "17706299609"	   		   # Twilio backend phone number
+
+# Constants to Distinguish User Text Messages and Requests
+WELCOME = "*"		# Keyword to distinguish message with the page title
+INFO = "**"			# Keyword to distriguish message with sidebar parameter
+SEARCH = "***"		# Keyword to distinguish message with query string
+RESULTS = "****"	# Keyword to distinguish message with the results
+OTHER = "Other"		# Keyword to distinguish is user is parsing main text
+RESTART = "Restart" # Keyword to restart the user search
+BACK = "Back"		# Keyword to go back a step in the user search
+EXIT = "Exit"		# Keyword to quit the program
+
+# Constants for instructional response messages to send to the user
+WELCOME_MESSAGE = "* \nWelcome to wikiSMS. Please respond with the name of"\
+				   + " the page you would like to get information about."\
+				   + " If you make a typo at any point, just reply with the"\
+				   + " word back to go back a step or restart to restart your"\
+				   + " search."
+PAGE_NOT_FOUND = "* \nThe page you requested could not be found. "\
+			      + "Please respond with another page name."
+INFO_MESSAGE = "** \nPlease respond with one of the following keywords "\
+				 + "that matches what you are searching for, or respond with"\
+				 + " other if none of the following apply:\n"
+QUERY_MESSAGE = "*** \nYou have selected the other option. Please respond with"\
+				   + " the specific piece of information you are looking for."
+SEARCH_AGAIN = "\nPlease respond with exit if you are finished, "\
+			 + "restart if you would like information from a new page, "\
+			 + "or enter another keyword."
+GOODBYE_MESSAGE = "Thank you for using WikiSMS."
+
+
+# Constants for array/string indices 
+INDICATOR_INDEX = 0		# Index of message containing keyword for current step
+INDICATOR_STRING = 7	# Index of keyword in indicator message
+INFO_TITLE = 1			# Index of SMS with the title when parsing sidebar
+QUERY_TITLE = 2			# Index of SMS with the title when parsing main text
+RESULT_TITLE = 0		# Index of SMS with the title when searching again
+RESULT_INDEX = 1		# Index of SMS with the potential last search's results
+TITLE_LENGTH = 7		# Int for the length of the title phrase
+
+# Miscellaneous Constants
+NEW_LINE = '\n'			# New line character 
+BODY = "Body"			# String for body attribute of Flask request
+SPACE = ' '				# Char for an space character
+EMPTY = ''				# Char for an empty character
+TITLE = "Title: "		# String for the title heading for the results sms
+QUERY = "Query: "		# String for the query heading for the results sms
+RESULT = "Result: "		# String for the results heading for the results sms
