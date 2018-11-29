@@ -13,16 +13,17 @@ app = Flask(__name__)
 def main():
 	client = sms_be.make_client()
 	message = request.values.get(const.BODY, None)
-	recent_messages = client.messages.list()
-	user = const.EMPTY
-	for sms in recent_messages:
-		if(sms.body == message):
-			user = sms.from_
-			recent_messages = client.messages.list(to=user)
-			break
-	message_indicator = recent_messages[const.INDICATOR_INDEX].body
-	body_words = message_indicator.split(const.SPACE)
+	if(True):
+		recent_messages = client.messages.list()
+		user = const.EMPTY
+		for sms in recent_messages:
+			if(sms.body == message):
+				user = sms.from_
+				recent_messages = client.messages.list(to=user)
+				break
 	try:
+		message_indicator = recent_messages[const.INDICATOR_INDEX].body
+		body_words = message_indicator.split(const.SPACE)
 		message_indicator = body_words[const.INDICATOR_STRING]
 	except: 
 		return sms_be.sms_welcome_message()
@@ -31,8 +32,6 @@ def main():
 		return sms_be.sms_goodbye_message()
 	elif(message.lower() == const.RESTART.lower()):
 		return sms_be.sms_welcome_message()
-	elif(message.lower() == const.BACK.lower()):
-		return sms_be.sms_resend_most_recent_message_reply(recent_messages)
 	elif(message_indicator == const.WELCOME):	
 		return sms_be.sms_sidebar_reply(message)
 	elif(message_indicator == const.INFO):
@@ -59,7 +58,7 @@ def main():
 			return sms_be.sms_get_query_reply()
 		else:
 			title_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
-			start = title_sms.find(const.TITLE)
+			start = title_sms.find(const.TITLE) + const.TITLE_LENGTH
 			title = title_sms[start:title_sms.find(const.NEW_LINE, start)]
 			return sms_be.sms_search_infobox_reply(title, message)
 	else:																		
