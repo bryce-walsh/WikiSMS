@@ -86,18 +86,12 @@ def parse_infobox(title):
 #print(check_sidebar("Tufts University", "Motto"))
 #print()
 
-# title = input("Please enter page title: ")
-# sidebarOrMain = input("Do you think the information is in the sidebar (S) or the main text (T)? ")
-# if sidebarOrMain == "S":
-# 	print("These are the sidebar parameters for this page: ")
-# 	pp.pprint(sidebar_parameters(title))
-# 	hint = input ("Which parameter do you want the value for? ")
-# 	print(check_sidebar(title, hint))
-# elif sidebarOrMain == "T":
-# 	print("These are the section headings for this page:")
-# 	pp.pprint(subject_headings(title))
-# 	heading = input("Which heading do you think contains the information? ")
-# 	hint = input("What infomation are you looking for? ")
-# 	print(search_main_text(title, hint, heading))
-# else:
-# 	print("Please try again")
+title = input("Please enter page title: ")
+print("These are the sidebar parameters for this page: ")
+pp.pprint(sidebar_parameters(title))
+parameter = input ("For which parameter would you like the value? ")
+if parameter == "Other":
+	hint = input("What infomation are you looking for? ")
+	print(search_main_text(title, hint))
+else:
+	print(check_sidebar(title, parameter))
