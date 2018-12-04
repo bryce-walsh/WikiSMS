@@ -11,56 +11,33 @@ app = Flask(__name__)
 @app.route("/sms", methods=['GET','POST'])
 
 def main():
-	client = sms_be.make_client()
-	message = request.values.get(const.BODY, None)
-	if(True):
-		recent_messages = client.messages.list()
-		user = const.EMPTY
-		for sms in recent_messages:
-			if(sms.body == message):
-				user = sms.from_
-				recent_messages = client.messages.list(to=user)
-				break
+	# Get Twillio client object, user phone number, and recent messages 
+	client, user, message, recent_messages = sms_be.get_recent_messages()
 	try:
-		message_indicator = recent_messages[const.INDICATOR_INDEX].body
-		body_words = message_indicator.split(const.SPACE)
-		message_indicator = body_words[const.INDICATOR_STRING]
+		# Pull the inidcator from the recieved sms for which step the user is at
+		message_indicator = sms_be.get_message_indicator(recent_messages)
 	except: 
+		# If no messages exist with the user, respond with the welcome message
 		return sms_be.sms_welcome_message()
-
+	# Respond with the goodbye message
 	if(message.lower() == const.EXIT.lower()):
 		return sms_be.sms_goodbye_message()
+	# Restart the user search and respond with the welcome message
 	elif(message.lower() == const.RESTART.lower()):
 		return sms_be.sms_welcome_message()
-	elif(message_indicator == const.WELCOME):	
+	# Respond with the sidebar parameters from the page name the user sent
+	elif(message_indicator == const.WELCOME or message_indicator == const.AMBIG_TITLE):	
 		return sms_be.sms_sidebar_reply(message)
+	# Respond with value of the given key or get the query from the user
 	elif(message_indicator == const.INFO):
-		if(message.lower() == const.OTHER.lower()):
-			return sms_be.sms_get_query_reply()
-		else:
-			user_messages = client.messages.list(from_=user)
-			title = user_messages[const.INFO_TITLE].body
-			return sms_be.sms_search_infobox_reply(title, message)
+		return sms_be.process_keyword(client, user, message)
+	# Respond with the search results from parsing the main text
 	elif(message_indicator == const.SEARCH):
-		sent_messages = client.messages.list(to=user)
-		result_sms = sent_messages[const.RESULT_INDEX].body
-		body_words = result_sms.split(const.SPACE)
-		if(body_words[const.INDICATOR_STRING] == const.RESULTS):
-			start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
-			title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
-			return sms_be.sms_search_main_text_reply(title, message)
-		else:
-			user_messages = client.messages.list(from_=user)
-			title = user_messages[const.QUERY_TITLE].body
-			return sms_be.sms_search_main_text_reply(title, message)
+		return sms_be.process_search(client, user, message)
+	# Respond with new results from a follow up query
 	elif(message_indicator == const.RESULTS):
-		if(message.lower() == const.OTHER.lower()):
-			return sms_be.sms_get_query_reply()
-		else:
-			title_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
-			start = title_sms.find(const.TITLE) + const.TITLE_LENGTH
-			title = title_sms[start:title_sms.find(const.NEW_LINE, start)]
-			return sms_be.sms_search_infobox_reply(title, message)
+		return sms_be.process_new_search(client, user, message)
+	# Respond with the welcome message
 	else:																		
 		return sms_be.sms_welcome_message()								
 																					 
