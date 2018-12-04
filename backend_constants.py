@@ -1,17 +1,18 @@
 # Constants Module
 
 # Twilio Constants 
-SID = "AC520affbaf6ae1ee496f05abfc2fba256" # Twilio account sid
-TOKEN = "342cd21959401510580ee307c13b930e" # Twilio authentication token
-BACK_END_NUMBER = "17706299609"	   	   # Twilio backend phone number
+SID = "AC700de6d0d7ff9600f15ecbb84fefbf07" # Twilio account sid
+TOKEN = "e4dd1d3d81024a250f6ff50242ba591b" # Twilio authentication token
+BACK_END_NUMBER = "16782646845"	   		   # Twilio backend phone number
 
 # Constants to Distinguish User Text Messages and Requests
 WELCOME = "*"		# Keyword to distinguish message with the page title
-INFO = "**"		# Keyword to distriguish message with sidebar parameter
+AMBIG_TITLE = "?" 	# Keyword to distinguish message with ambiguous title
+INFO = "**"			# Keyword to distriguish message with sidebar parameter
 SEARCH = "***"		# Keyword to distinguish message with query string
 RESULTS = "****"	# Keyword to distinguish message with the results
 OTHER = "Other"		# Keyword to distinguish is user is parsing main text
-RESTART = "Restart" 	# Keyword to restart the user search
+RESTART = "Restart" # Keyword to restart the user search
 EXIT = "Exit"		# Keyword to quit the program
 
 # Constants for instructional response messages to send to the user
@@ -32,21 +33,20 @@ SEARCH_AGAIN = "\nPlease respond with exit if you are finished, "\
 			 + "or enter another keyword."
 GOODBYE_MESSAGE = "Thank you for using WikiSMS."
 
-
 # Constants for array/string indices 
 INDICATOR_INDEX = 0		# Index of message containing keyword for current step
-INDICATOR_STRING = 7		# Index of keyword in indicator message
+INDICATOR_STRING = 7	# Index of keyword in indicator message
 INFO_TITLE = 1			# Index of SMS with the title when parsing sidebar
 QUERY_TITLE = 2			# Index of SMS with the title when parsing main text
 RESULT_TITLE = 0		# Index of SMS with the title when searching again
 RESULT_INDEX = 1		# Index of SMS with the potential last search's results
-TITLE_LENGTH = 7		# Int for the length of the title phrase
+TITLE_LENGTH = 6		# Int for the length of the title phrase
 
 # Miscellaneous Constants
 NEW_LINE = '\n'			# New line character 
 BODY = "Body"			# String for body attribute of Flask request
-SPACE = ' '			# Char for an space character
-EMPTY = ''			# Char for an empty character
-TITLE = "Title: "		# String for the title heading for the results sms
+SPACE = ' '				# Char for an space character
+EMPTY = ''				# Char for an empty character
+TITLE = "Page: "		# String for the title heading for the results sms
 QUERY = "Query: "		# String for the query heading for the results sms
 RESULT = "Result: "		# String for the results heading for the results sms
