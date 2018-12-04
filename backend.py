@@ -1,5 +1,6 @@
 from mediawiki import MediaWiki
 from bs4 import BeautifulSoup
+import parsing_constants as const
 import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -47,11 +48,11 @@ def search_main_text(title, hint, heading = None):
 
 def search_content(content, hint):
 	contentLength = len(content)
-	for i in range(80,contentLength - 80):
-		candidate = content[i-80:i+80]
+	for i in range(const.RESPONSE_LEN, contentLength - const.RESPONSE_LEN):
+		candidate = content[i-const.RESPONSE_LEN:i+const.RESPONSE_LEN]
 		candidateLength = len(candidate)
-		middleBegin = int(((candidateLength/2) - 10))
-		middleEnd = int(((candidateLength/2) + 10))
+		middleBegin = int(((candidateLength/2) - (const.MIDDLE_LEN/2)))
+		middleEnd = int(((candidateLength/2) + (const.MIDDLE_LEN/2)))
 		middle = candidate[middleBegin:middleEnd]
 		if middle.lower().find(hint.lower()) != -1:
 			return candidate
