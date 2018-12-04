@@ -7,6 +7,41 @@ import backend as be
 import backend_constants as const
 
 '''
+get_recent_messages function
+Parameters: None
+Returns: client object for the associated Twilio account
+		 string for the phone number of the user interacting with the app
+		 array of message objects for the recent messages to the user
+Purpose: Pulls the recent messages to the user who just sent a message and 
+		 pulls the user's phone number and a client object for the Twillio 
+		 account
+'''
+def get_recent_messages():
+	client = make_client()
+	message = request.values.get(const.BODY, None)
+	if(True):
+		recent_messages = client.messages.list()
+		user = const.EMPTY
+		for sms in recent_messages:
+			if(sms.body == message):
+				user = sms.from_
+				recent_messages = client.messages.list(to=user)
+				break
+	return client, user, message, recent_messages
+
+'''
+get_message_indicator function
+Parameters: array of the recent messages sent to the user
+Returns: string for the indicator in the most recent sms to the user
+Purpose: Pulls the indicator from the most recent sms the user received
+'''
+def get_message_indicator(recent_messages):
+	message_indicator = recent_messages[const.INDICATOR_INDEX].body
+	body_words = message_indicator.split(const.SPACE)
+	message_indicator = body_words[const.INDICATOR_STRING]
+	return message_indicator
+
+'''
 make_client function
 Parameters: none
 Returns: client object
@@ -59,9 +94,28 @@ def sms_sidebar_reply(title):
 		options = options + const.OTHER
 		options = const.INFO_MESSAGE + options
 		resp.message(str(options))
+	except DisambiguationError as error:
+		resp.message(str(be.format_error(error)))
 	except:
 		resp.message(str(const.PAGE_NOT_FOUND))
 	return str(resp)
+
+'''
+process_keyword function
+Parameters: client object for the associated Twillio account
+			string for the phone number of the user
+			string for the body of the message the user sent
+Returns: Messaging Response object to send back to the user
+Purpose: Processes the keyword that the user sent and sends back the
+		 requested information or gets the query if the user selected other
+'''
+def process_keyword(client, user, message):
+	if(message.lower() == const.OTHER.lower()):
+		return sms_get_query_reply()
+	else:
+		user_messages = client.messages.list(from_=user)
+		title = user_messages[const.INFO_TITLE].body
+		return sms_search_infobox_reply(title, message)	
 
 '''
 get_query_reply function
@@ -108,6 +162,46 @@ def compile_results(title, query, info):
 		response = response + const.RESULT + info
 	response = response + const.NEW_LINE + const.SEARCH_AGAIN
 	return response 
+
+'''
+process_search function
+Parameters: client object for the associated Twillio account
+			string for the phone number of the user
+			string for the body of the message the user sent
+Returns: Messaging Response object to send back to the user
+Purpose: Processes the query that the user sent and sends back the
+		 requested information
+'''
+def process_search(client, user, message):
+	sent_messages = client.messages.list(to=user)
+	result_sms = sent_messages[const.RESULT_INDEX].body
+	body_words = result_sms.split(const.SPACE)
+	if(body_words[const.INDICATOR_STRING] == const.RESULTS):
+		start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
+		title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+		return sms_search_main_text_reply(title, message)
+	else:
+		user_messages = client.messages.list(from_=user)
+		title = user_messages[const.QUERY_TITLE].body
+		return sms_search_main_text_reply(title, message)	
+
+'''
+process_new_search function
+Parameters: client object for the associated Twillio account
+			string for the phone number of the user
+			string for the body of the message the user sent
+Returns: Messaging Response object to send back to the user
+Purpose: Processes the keyword that the user sent and sends back the
+		 requested information or gets the query if the user selected other
+'''
+def process_new_search(client, user, message):
+	if(message.lower() == const.OTHER.lower()):
+		return sms_get_query_reply()
+	else:
+		title_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
+		start = title_sms.find(const.TITLE) + const.TITLE_LENGTH
+		title = title_sms[start:title_sms.find(const.NEW_LINE, start)]
+		return sms_search_infobox_reply(title, message)
 
 '''
 sms_search_main_text_reply function
