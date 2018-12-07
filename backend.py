@@ -6,10 +6,15 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 wikipedia = MediaWiki()
 
-#Returns the first 160 characters of the given query page if it exists
-def get_first_160(query):
-	page = wikipedia.page(query)
-	return page.summarize(chars=160)
+#Returns the first sentence of the given title page
+def first_sentence(title):
+	page = wikipedia.page(title)
+	return page.summarize(sentences=1)
+
+#Returns the wikipedia link for the given title
+def wikipedia_url(title):
+	page = wikipedia.page(title)
+	return page.url
 
 #Returns the fields for which there is information in the infobox of the
 #page
@@ -87,12 +92,14 @@ def parse_infobox(title):
 #print(check_sidebar("Tufts University", "Motto"))
 #print()
 
-title = input("Please enter page title: ")
-print("These are the sidebar parameters for this page: ")
-pp.pprint(sidebar_parameters(title))
-parameter = input ("For which parameter would you like the value? ")
-if parameter == "Other":
-	hint = input("What infomation are you looking for? ")
-	print(search_main_text(title, hint))
-else:
-	print(check_sidebar(title, parameter))
+# title = input("Please enter page title: ")
+# print(first_sentence(title))
+# print(wikipedia_url(title))
+# print("These are the sidebar parameters for this page: ")
+# pp.pprint(sidebar_parameters(title))
+# parameter = input ("For which parameter would you like the value? ")
+# if parameter == "Other":
+# 	hint = input("What infomation are you looking for? ")
+# 	print(search_main_text(title, hint))
+# else:
+# 	print(check_sidebar(title, parameter))
