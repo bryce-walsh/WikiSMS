@@ -25,6 +25,8 @@ def main():
 	# Restart the user search and respond with the welcome message
 	elif(message.lower() == const.RESTART.lower()):
 		return sms_be.sms_welcome_message()
+	elif(message.lower() == const.LINK.lower()):
+		return sms_be.sms_send_link(client, user)
 	# Respond with the sidebar parameters from the page name the user sent
 	elif(message_indicator == const.WELCOME or message_indicator == const.AMBIG_TITLE):	
 		return sms_be.sms_sidebar_reply(message)
