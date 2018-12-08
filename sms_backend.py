@@ -3,7 +3,6 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
-from mediawiki import exceptions
 import backend as be
 import backend_constants as const
 
@@ -57,13 +56,27 @@ def make_client():
 '''
 sms_welcome_message function
 Parameters: None
-Returns: String for the response message to send to the front end
+Returns: Messaging Response to send to the front end
 Purpose: Sends the intiial welcome message to the user 
 		 with instructions for how to proceed
 '''
 def sms_welcome_message():
 	resp = MessagingResponse()
 	resp.message(str(const.WELCOME_MESSAGE))
+	return str(resp)
+
+'''
+sms_send_link function
+Parameters: None
+Returns: Messaging Response object to send back to the user
+Purpose: Sends the link of the title page back to the user
+'''
+def sms_send_link(client, user):
+	resp = MessagingResponse()
+	user_sms = client.messages.list(from_=user)
+	title = user_sms[const.LINK_TITLE].body
+	link = be.wikipedia_url(title)
+	resp.message(str(link))
 	return str(resp)
 
 '''
@@ -88,15 +101,15 @@ Purpose: Pulls the infobox keywords from the Wikipedia page
 def sms_sidebar_reply(title):
 	resp = MessagingResponse()
 	try:
-		keywords = be.sidebar_parameters(title)
+		keywords = sorted(be.sidebar_parameters(title))
 		options = const.EMPTY
+		index = const.INCREMENT
 		for keyword in keywords:
-			options = keyword + const.NEW_LINE + options
-		options = options + const.OTHER
-		options = const.INFO_MESSAGE + options
+			options = options + str(index) + const.PERIOD + const.SPACE + keyword + const.NEW_LINE
+			index += const.INCREMENT
+		options = options + const.LINK_MESSAGE + const.OTHER_MESSAGE
+		options =  const.INFO + const.NEW_LINE + str(be.first_sentence(title)) + const.NEW_LINE + const.INFO_MESSAGE + options
 		resp.message(str(options))
-	except exceptions.DisambiguationError as error:
-		resp.message(str(be.format_error(error)))
 	except:
 		resp.message(str(const.PAGE_NOT_FOUND))
 	return str(resp)
@@ -116,7 +129,12 @@ def process_keyword(client, user, message):
 	else:
 		user_messages = client.messages.list(from_=user)
 		title = user_messages[const.INFO_TITLE].body
-		return sms_search_infobox_reply(title, message)	
+		keywords = sorted(be.sidebar_parameters(title))
+		try:
+			keyword = keywords[int(message)-const.INCREMENT]
+			return sms_search_infobox_reply(title, keyword)	
+		except:
+			return sms_sidebar_reply(title)
 
 '''
 get_query_reply function
@@ -202,7 +220,9 @@ def process_new_search(client, user, message):
 		title_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
 		start = title_sms.find(const.TITLE) + const.TITLE_LENGTH
 		title = title_sms[start:title_sms.find(const.NEW_LINE, start)]
-		return sms_search_infobox_reply(title, message)
+		keywords = sorted(be.sidebar_parameters(title))
+		keyword = keywords[int(message)-const.INCREMENT]
+		return sms_search_infobox_reply(title, keyword)
 
 '''
 sms_search_main_text_reply function
