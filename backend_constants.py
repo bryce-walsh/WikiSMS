@@ -11,27 +11,26 @@ AMBIG_TITLE = "?" 	# Keyword to distinguish message with ambiguous title
 INFO = "**"			# Keyword to distriguish message with sidebar parameter
 SEARCH = "***"		# Keyword to distinguish message with query string
 RESULTS = "****"	# Keyword to distinguish message with the results
-OTHER = "Other"		# Keyword to distinguish is user is parsing main text
+OTHER = "OTHER"		# Keyword to distinguish is user is parsing main text
 RESTART = "Restart" # Keyword to restart the user search
 EXIT = "Exit"		# Keyword to quit the program
+LINK = "LINK"		# Keyword to send the user the link to the title page
 
 # Constants for instructional response messages to send to the user
 WELCOME_MESSAGE = "* \nWelcome to wikiSMS. Please respond with the name of"\
-				   + " the page you would like to get information about."\
-				   + " If you make a typo at any point, just reply with the"\
-				   + " word restart to start over."
+				+ " the page you would like to get information about."
 PAGE_NOT_FOUND = "* \nThe page you requested could not be found. "\
-			      + "Please respond with another page name."
-INFO_MESSAGE = "** \nPlease respond with one of the following keywords "\
-				 + "that matches what you are searching for, or respond with"\
-				 + " other if none of the following apply:\n"
-QUERY_MESSAGE = "*** \nYou have selected the other option. Please respond with"\
-				   + " the specific piece of information you are looking for."
+			   + "Please respond with another page name."
+INFO_MESSAGE = "\nPlease respond with one of the following numbers:\n"
+QUERY_MESSAGE = "*** \nYou have selected the OTHER option. Please respond with"\
+			  + " the specific piece of information you are looking for."
 NO_INFO = " could not be found within the page for "
-SEARCH_AGAIN = "\nPlease respond with exit if you are finished, "\
-			 + "restart if you would like information from a new page, "\
-			 + "or enter another keyword."
+SEARCH_AGAIN = "\nPlease respond with:\nEXIT if you are finished\n"\
+			 + "RESTART if you would like information from a new page\n"\
+			 + "or enter another keyword number."
 GOODBYE_MESSAGE = "Thank you for using WikiSMS."
+LINK_MESSAGE = "LINK (if you want the link to the title page)\n"
+OTHER_MESSAGE = "OTHER (if none of the above apply)"
 
 # Constants for array/string indices 
 INDICATOR_INDEX = 0		# Index of message containing keyword for current step
@@ -41,12 +40,15 @@ QUERY_TITLE = 2			# Index of SMS with the title when parsing main text
 RESULT_TITLE = 0		# Index of SMS with the title when searching again
 RESULT_INDEX = 1		# Index of SMS with the potential last search's results
 TITLE_LENGTH = 6		# Int for the length of the title phrase
+INCREMENT = 1			# Int for the increment size of numbering
+LINK_TITLE = 1			# Index of SMS with the title when sending the title page link
 
 # Miscellaneous Constants
 NEW_LINE = '\n'			# New line character 
 BODY = "Body"			# String for body attribute of Flask request
 SPACE = ' '				# Char for an space character
 EMPTY = ''				# Char for an empty character
+PERIOD = '.'			# Char for a period character
 TITLE = "Page: "		# String for the title heading for the results sms
 QUERY = "Query: "		# String for the query heading for the results sms
 RESULT = "Result: "		# String for the results heading for the results sms
