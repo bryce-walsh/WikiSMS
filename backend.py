@@ -1,6 +1,7 @@
 from mediawiki import MediaWiki
+from mediawiki import exceptions
 from bs4 import BeautifulSoup
-import parsing_constants as const
+import parser_constants as const
 import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -19,13 +20,22 @@ def wikipedia_url(title):
 #Returns the fields for which there is information in the infobox of the
 #page
 def sidebar_parameters(title):
+	# try:
 	infobox = parse_infobox(title)
+	# except exceptions.DisambiguationError as err:
+	# 	print(err.options)
+	# 	return list("A problem has occured")
 	return list(infobox.keys())
 
 #Returns a list of the subject headings for the given page
 def subject_headings(title):
 	page = wikipedia.page(title)
 	return page.sections
+
+#Returns the first possible pages to be passed to the user based on the given error.
+def format_error(error):
+	print(error.title)
+	return error.options[0:2]
 
 #Searches the sidebar of the page with the given title and 
 #Returns the string associated with the hint if one is found
@@ -93,8 +103,8 @@ def parse_infobox(title):
 #print()
 
 # title = input("Please enter page title: ")
-# print(first_sentence(title))
-# print(wikipedia_url(title))
+# #print(first_sentence(title))
+# #print(wikipedia_url(title))
 # print("These are the sidebar parameters for this page: ")
 # pp.pprint(sidebar_parameters(title))
 # parameter = input ("For which parameter would you like the value? ")

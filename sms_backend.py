@@ -3,6 +3,7 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
+from mediawiki import exceptions
 import backend as be
 import backend_constants as const
 
@@ -94,7 +95,7 @@ def sms_sidebar_reply(title):
 		options = options + const.OTHER
 		options = const.INFO_MESSAGE + options
 		resp.message(str(options))
-	except DisambiguationError as error:
+	except exceptions.DisambiguationError as error:
 		resp.message(str(be.format_error(error)))
 	except:
 		resp.message(str(const.PAGE_NOT_FOUND))
