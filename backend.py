@@ -3,6 +3,7 @@ from mediawiki import exceptions
 from bs4 import BeautifulSoup
 import parser_constants as const
 import pprint
+import string
 
 pp = pprint.PrettyPrinter(indent=4)
 wikipedia = MediaWiki()
@@ -66,7 +67,7 @@ def search_content(content, hint):
 	for i in range(const.RESPONSE_LEN, contentLength - const.RESPONSE_LEN):
 		candidate = content[i-const.RESPONSE_LEN:i+const.RESPONSE_LEN]
 		candidateLength = len(candidate)
-		middleBegin = int(((candidateLength/2) - (const.MIDDLE_LEN/2)))
+		middleBegin = int(((canWadidateLength/2) - (const.MIDDLE_LEN/2)))
 		middleEnd = int(((candidateLength/2) + (const.MIDDLE_LEN/2)))
 		middle = candidate[middleBegin:middleEnd]
 		if middle.lower().find(hint.lower()) != -1:
@@ -94,22 +95,56 @@ def parse_infobox(title):
 				infobox[parameter] = value
 	return infobox
 
-#Example use
-#print("Sidebar fields for Tufts University:")
-#print(sidebar_parameters("Tufts University"))
-#print()
-#print("Tufts University Motto:")
-#print(check_sidebar("Tufts University", "Motto"))
-#print()
+# Given the title of a page entered to be searched and the 
+# error caused by searching it, returns suggestions for what 
+# the user probably meant.
+def suggestions(title, err):
+	errName = err.__class__.__name__
+	if errName == exceptions.PageError.__name__:
+		results, suggestion = wikipedia.search(title, suggestion=True)
+		return [string.capwords(suggestion)] + results
+	if errName == exceptions.DisambiguationError.__name__:
+		results = wikipedia.search(title)
+		# First result is usually the page searched, not useful when Disambiguation
+		return results[1:len(results)] 
 
-# title = input("Please enter page title: ")
-# #print(first_sentence(title))
-# #print(wikipedia_url(title))
-# print("These are the sidebar parameters for this page: ")
-# pp.pprint(sidebar_parameters(title))
-# parameter = input ("For which parameter would you like the value? ")
-# if parameter == "Other":
-# 	hint = input("What infomation are you looking for? ")
-# 	print(search_main_text(title, hint))
-# else:
-# 	print(check_sidebar(title, parameter))
+# Test the suggestions method
+def test_suggestions(title):
+	print("--TESTING SUGGESTIONS--")
+	try:
+		page = wikipedia.page(title)
+	except exceptions.PageError as err:
+		print("Sorry, that's not a valid page title")
+		print("Perhaps you meant one of the following?")
+		print(suggestions(title, err))
+	except exceptions.DisambiguationError as err:
+		print("Sorry, that page title is not specific enough")
+		print("Perhaps you were looking for one of the following?")
+		print(suggestions(title, err))
+	else:
+		print("Congrats! That's a real page.")
+		print("URL: " + wikipedia_url(title))
+		print("First Sentece:" + first_sentence(title))		
+
+# Simulate the front end for backend testing
+def simulate_text(title):
+	print("These are the sidebar parameters for this page: ")
+	pp.pprint(sidebar_parameters(title))
+	parameter = input ("For which parameter would you like the value? ")
+	if parameter == "Other":
+		hint = input("What infomation are you looking for? ")
+		print(search_main_text(title, hint))
+	else:
+		print(check_sidebar(title, parameter))
+
+def run_tests(title):
+	test_suggestions(title)
+	#simulate_text(title)
+
+def test_backend():
+	while True:
+		title = input("Please enter page title: ")
+		run_tests(title)
+
+test_backend()
+
