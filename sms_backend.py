@@ -71,12 +71,18 @@ Parameters: None
 Returns: Messaging Response object to send back to the user
 Purpose: Sends the link of the title page back to the user
 '''
-def sms_send_link(client, user):
+def sms_send_link(client, user, message_indicator):
 	resp = MessagingResponse()
 	user_sms = client.messages.list(from_=user)
-	title = user_sms[const.LINK_TITLE].body
+	sent_messages = client.messages.list(to=user)
+	result_sms = sent_messages[const.RESULT_TITLE].body
+	if(message_indicator == const.RESULTS):
+		start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
+		title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	else:
+		title = user_sms[const.LINK_TITLE].body
 	link = be.wikipedia_url(title)
-	resp.message(str(link))
+	resp.message(str(compile_results(title, const.LINK, link)))
 	return str(resp)
 
 '''
