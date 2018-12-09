@@ -59,19 +59,21 @@ def search_main_text(title, hint, heading = None):
 			content = page.content
 	else:
 		content = page.content
-	result = search_content(content, hint)
-	return result
+	candidates = search_content(content, hint)
+	return candidates[0]
 
 def search_content(content, hint):
 	contentLength = len(content)
+	candidates = []
 	for i in range(const.RESPONSE_LEN, contentLength - const.RESPONSE_LEN):
 		candidate = content[i-const.RESPONSE_LEN:i+const.RESPONSE_LEN]
 		candidateLength = len(candidate)
-		middleBegin = int(((canWadidateLength/2) - (const.MIDDLE_LEN/2)))
+		middleBegin = int(((candidateLength/2) - (const.MIDDLE_LEN/2)))
 		middleEnd = int(((candidateLength/2) + (const.MIDDLE_LEN/2)))
 		middle = candidate[middleBegin:middleEnd]
 		if middle.lower().find(hint.lower()) != -1:
-			return candidate
+			candidates.append(candidate)
+	return candidates
 
 #Returns a dictionary where the keys are the parameters
 #of the given page's infobox and the values are the values
@@ -138,8 +140,8 @@ def simulate_text(title):
 		print(check_sidebar(title, parameter))
 
 def run_tests(title):
-	test_suggestions(title)
-	#simulate_text(title)
+	#test_suggestions(title)
+	simulate_text(title)
 
 def test_backend():
 	while True:
