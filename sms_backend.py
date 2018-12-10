@@ -119,9 +119,8 @@ def sms_send_link(client, user, message_indicator):
 	user_sms = client.messages.list(from_=user)
 	sent_messages = client.messages.list(to=user)
 	result_sms = sent_messages[const.RESULT_TITLE].body
-	if(message_indicator == const.RESULTS):
-		start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
-		title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
+	title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
 	link = be.wikipedia_url(title)
 	resp.message(str(compile_results(title, const.LINK, link, True)))
 	return str(resp)
@@ -185,9 +184,10 @@ def sms_sidebar_reply(title):
 			 		  keyword + const.NEW_LINE
 			index += const.INCREMENT
 		options = options + const.LINK_MESSAGE + const.OTHER_MESSAGE
-		options =  const.INFO + const.NEW_LINE + const.TITLE + title +\
-				   const.NEW_LINE + const.BLURB + str(be.first_sentence(title))\
-				   + const.NEW_LINE + const.INFO_MESSAGE + options
+		options =  const.INFO + const.SPACE + const.NEW_LINE + const.TITLE +\
+				   title + const.NEW_LINE + const.BLURB +\
+				   str(be.first_sentence(title)) + const.NEW_LINE +\
+				   const.INFO_MESSAGE + options
 		resp.message(str(options))
 	except Exception as error:
 		keywords = sorted(be.suggestions(title, error))
@@ -217,7 +217,7 @@ def process_keyword(client, user, message):
 	else:
 		user_messages = client.messages.list(to=user)
 		title_sms = user_messages[const.INFO_TITLE].body
-		start = title_sms.find(const.TITLE) + const.TITLE_LENGTH
+		start = title_sms.find(const.TITLE) + len(const.TITLE)
 		title = title_sms[start:title_sms.find(const.NEW_LINE, start)]
 		keywords = sorted(be.sidebar_parameters(title))
 		try:
