@@ -4,50 +4,48 @@ from bs4 import BeautifulSoup
 import parser_constants as const
 import pprint
 import string
+import operator
+import sys
 
 pp = pprint.PrettyPrinter(indent=4)
 wikipedia = MediaWiki()
 
-#Returns the first sentence of the given title page
+# Returns the first sentence of the given title page
 def first_sentence(title):
 	page = wikipedia.page(title)
 	return page.summarize(sentences=1)
 
-#Returns the wikipedia link for the given title
+# Returns the wikipedia link for the given title
 def wikipedia_url(title):
 	page = wikipedia.page(title)
 	return page.url
 
-#Returns the fields for which there is information in the infobox of the
-#page
+# Returns the fields for which there is information in the infobox of the
+# page
 def sidebar_parameters(title):
-	# try:
 	infobox = parse_infobox(title)
-	# except exceptions.DisambiguationError as err:
-	# 	print(err.options)
-	# 	return list("A problem has occured")
 	return list(infobox.keys())
 
-#Returns a list of the subject headings for the given page
+# Returns a list of the subject headings for the given page
 def subject_headings(title):
 	page = wikipedia.page(title)
 	return page.sections
 
-#Returns the first possible pages to be passed to the user based on the given error.
+# Returns the first possible pages to be passed to the user based on the given error.
 def format_error(error):
 	print(error.title)
 	return error.options[0:2]
 
-#Searches the sidebar of the page with the given title and 
-#Returns the string associated with the hint if one is found
+# Searches the sidebar of the page with the given title and 
+# Returns the string associated with the hint if one is found
 def check_sidebar(title, hint):
 	infobox = parse_infobox(title)
 	for key in infobox.keys():
 		if hint.lower() in key.lower():
 			return infobox[key]
 
-#Searches the main text of the page and makes a best guess
-#as to what 160 char response is most likely to contain the information
+# Searches the main text of the page and makes a best guess
+# as to what 160 char response is most likely to contain the information
 def search_main_text(title, hint, heading = None):
 	page = wikipedia.page(title)
 	if heading:
@@ -60,8 +58,24 @@ def search_main_text(title, hint, heading = None):
 	else:
 		content = page.content
 	candidates = search_content(content, hint)
-	return candidates[0]
+	sortedCandidates = sort_by_proximity(candidates, title, hint)
+	if sortedCandidates:
+		return sortedCandidates[0][0]
+	else:
+		return None
+	
+# Returns a list of (candidate, proximity) tuples, sorted by 
+# the proximity of the hint word to the title of the page
+def sort_by_proximity(candidates,title,hint):
+	candidatesWithProximity = {}
+	for candidate in candidates:
+		candidateProximity = proximity(candidate, title, hint)
+		candidatesWithProximity[candidate] = candidateProximity
+	sortedCandidates = sorted(candidatesWithProximity.items(), key=operator.itemgetter(1))
+	return sortedCandidates
 
+# Returns a list of candidate responses based on the given content 
+# and hint
 def search_content(content, hint):
 	contentLength = len(content)
 	candidates = []
@@ -74,6 +88,25 @@ def search_content(content, hint):
 		if middle.lower().find(hint.lower()) != -1:
 			candidates.append(candidate)
 	return candidates
+
+def proximity(candidate, title, hint):
+	candidate = candidate.lower()
+	hint = hint.lower()
+	title = title.lower()
+	hintIndex = candidate.index(hint)
+	candidateLeft = candidate[0:hintIndex]
+	candidateRight = candidate[hintIndex:len(candidate)]
+	if title in candidateLeft:
+	 	titleIndexLeft = candidate.index(title)
+	 	proximityLeft = hintIndex - titleIndexLeft
+	else:
+		proximityLeft = sys.maxsize
+	if title in candidateRight:
+	 	titleIndexRight = candidate.index(title)
+	 	proximityRight = titleIndexRight - hintIndex
+	else:
+		proximityRight = sys.maxsize
+	return min(proximityLeft, proximityRight)
 
 #Returns a dictionary where the keys are the parameters
 #of the given page's infobox and the values are the values
@@ -128,6 +161,15 @@ def test_suggestions(title):
 		print("URL: " + wikipedia_url(title))
 		print("First Sentece:" + first_sentence(title))		
 
+# Test the proximity method
+def test_proximity():
+	while True:
+		#candidate = input("Candidate: ")
+		candidate = "The quick brown fox jumped over the lazy dog"
+		hint = input("Hint: ")
+		title = input("Title: ")
+		print(proximity(candidate, title, hint))
+
 # Simulate the front end for backend testing
 def simulate_text(title):
 	print("These are the sidebar parameters for this page: ")
@@ -141,6 +183,7 @@ def simulate_text(title):
 
 def run_tests(title):
 	#test_suggestions(title)
+	#test_proximity()
 	simulate_text(title)
 
 def test_backend():
@@ -148,5 +191,5 @@ def test_backend():
 		title = input("Please enter page title: ")
 		run_tests(title)
 
-test_backend()
+#test_backend()
 
