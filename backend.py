@@ -47,7 +47,7 @@ def check_sidebar(title, hint):
 # Searches the main text of the page and makes a best guess
 # as to what 160 char response is most likely to contain the information
 # The optional index parameter specifies which rank in the results 
-# to be returned
+# to be returned. If none is given, will return the highest ranked result.
 def search_main_text(title, hint, index = 0):
 	page = wikipedia.page(title)
 	content = page.content
@@ -58,7 +58,7 @@ def search_main_text(title, hint, index = 0):
 		return sortedCandidates[index][0]
 	else:
 		return None
-	
+
 # Returns a list of (candidate, proximity) tuples, sorted by 
 # the proximity of the hint word to the title of the page
 def sort_by_proximity(candidates,title,hint):
@@ -74,12 +74,13 @@ def sort_by_proximity(candidates,title,hint):
 def search_content(content, hint):
 	contentLength = len(content)
 	candidates = []
-	i = const.RESPONSE_LEN
-	while i < contentLength - const.RESPONSE_LEN:
-		candidate = content[i-const.RESPONSE_LEN:i+const.RESPONSE_LEN]
+	halfResponseLen = const.RESPONSE_LEN // 2
+	i = halfResponseLen
+	while i < contentLength - halfResponseLen:
+		candidate = content[i-halfResponseLen:i+halfResponseLen]
 		candidateLength = len(candidate)
-		middleBegin = int(((candidateLength/2) - (const.MIDDLE_LEN/2)))
-		middleEnd = int(((candidateLength/2) + (const.MIDDLE_LEN/2)))
+		middleBegin = (candidateLength//2) - (const.MIDDLE_LEN//2)
+		middleEnd = (candidateLength//2) + (const.MIDDLE_LEN//2)
 		middle = candidate[middleBegin:middleEnd]
 		if middle.lower().find(hint.lower()) != -1:
 			candidates.append(candidate)
