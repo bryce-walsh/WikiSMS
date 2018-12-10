@@ -27,8 +27,10 @@ def main():
 		return sms_be.sms_welcome_message()
 	elif(message.lower() == const.LINK.lower()):
 		return sms_be.sms_send_link(client, user, message_indicator)
+	elif(message_indicator == const.AMBIG_TITLE):
+		return sms_be.sms_ambig_reply(client, user, message)
 	# Respond with the sidebar parameters from the page name the user sent
-	elif(message_indicator == const.WELCOME or message_indicator == const.AMBIG_TITLE):	
+	elif(message_indicator == const.WELCOME):	
 		return sms_be.sms_sidebar_reply(message)
 	# Respond with value of the given key or get the query from the user
 	elif(message_indicator == const.INFO):
