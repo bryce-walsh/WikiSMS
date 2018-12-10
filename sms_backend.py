@@ -66,6 +66,49 @@ def sms_welcome_message():
 	return str(resp)
 
 '''
+sms_send_next function
+Parameters: client object associated to the Twilio account
+			string for the user's phone number
+Returns: Nessaging Response object to send back to the user
+Purpose: Sends the user the next occurance of the query they are searching
+'''
+def sms_send_next(client, user):
+	resp = MessagingResponse()
+	recent_messages = client.messages.list(from_=user)
+	count = 0
+	for sms in recent_messages:
+		if(sms.body.lower() == const.NEXT.lower()):
+			count += const.INCREMENT
+		else:
+			break
+	result_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
+	start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
+	title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	start = result_sms.find(const.QUERY) + len(const.QUERY)
+	query = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	try:
+		info = be.search_main_text(title, query, count)
+		response = compile_results(title, query, info, False)
+	except:
+		response = compile_results(title, query, const.LAST_OCCURANCE, False)
+	resp.message(str(response))
+	return str(resp)
+
+def sms_show_more(client, user):
+	resp = MessagingResponse()
+	result_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
+	start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
+	title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	start = result_sms.find(const.QUERY) + len(const.QUERY)
+	query = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	start = result_sms.find(const.RESULT) + len(const.RESULT)
+	result = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	info = be.read_more(title, result)
+	response = compile_results(title, query, info, False)
+	resp.message(str(response))
+	return str(resp)
+
+'''
 sms_send_link function
 Parameters: None
 Returns: Messaging Response object to send back to the user
@@ -82,7 +125,7 @@ def sms_send_link(client, user, message_indicator):
 	else:
 		title = user_sms[const.LINK_TITLE].body
 	link = be.wikipedia_url(title)
-	resp.message(str(compile_results(title, const.LINK, link)))
+	resp.message(str(compile_results(title, const.LINK, link, True)))
 	return str(resp)
 
 '''
@@ -209,7 +252,7 @@ Purpose: Pulls the infobrmation related to the passed in query on the
 def sms_search_infobox_reply(title, query):
 	resp = MessagingResponse()
 	info = be.check_sidebar(title, query)
-	response = compile_results(title, query, info)
+	response = compile_results(title, query, info, True)
 	resp.message(str(response))
 	return str(resp)
 
@@ -221,14 +264,18 @@ Parameters: string for the title to search Wikipedia for
 Returns: string for the results that will be sent back to the user
 Purpose: Compiles the message that will be sent back to the user for the results
 '''
-def compile_results(title, query, info):
+def compile_results(title, query, info, infobar):
 	response = const.RESULTS + const.SPACE + const.NEW_LINE + const.TITLE\
 			 + title + const.NEW_LINE + const.QUERY + query + const.NEW_LINE
 	if(info == None):
-		response = response + const.RESULT + query + const.NO_INFO + title
+		response += const.RESULT + query + const.NO_INFO + title
 	else:
-		response = response + const.RESULT + info
-	response = response + const.NEW_LINE + const.SEARCH_AGAIN
+		response += const.RESULT + info
+	response += const.NEW_LINE
+	if(infobar):
+		response += const.SEARCH_AGAIN
+	else:
+		response += const.SEARCH_AGAIN_NEXT
 	return response 
 
 '''
@@ -244,14 +291,9 @@ def process_search(client, user, message):
 	sent_messages = client.messages.list(to=user)
 	result_sms = sent_messages[const.RESULT_INDEX].body
 	body_words = result_sms.split(const.SPACE)
-	if(body_words[const.INDICATOR_STRING] == const.RESULTS):
-		start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
-		title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
-		return sms_search_main_text_reply(title, message)
-	else:
-		user_messages = client.messages.list(from_=user)
-		title = user_messages[const.QUERY_TITLE].body
-		return sms_search_main_text_reply(title, message)	
+	start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
+	title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
+	return sms_search_main_text_reply(title, message)	
 
 '''
 process_new_search function
@@ -284,7 +326,7 @@ Purpose: Searches the heading within the title page for the hint
 '''
 def sms_search_main_text_reply(title, hint):
 	info = be.search_main_text(title, hint)
-	response = compile_results(title, hint, info)
+	response = compile_results(title, hint, info, False)
 	resp = MessagingResponse()
 	resp.message(str(response))
 	return str(resp)
