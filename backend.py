@@ -58,6 +58,7 @@ def search_main_text(title, hint, heading = None):
 	else:
 		content = page.content
 	candidates = search_content(content, hint)
+	pp.pprint(candidates)
 	sortedCandidates = sort_by_proximity(candidates, title, hint)
 	if sortedCandidates:
 		return sortedCandidates[0][0]
@@ -79,7 +80,8 @@ def sort_by_proximity(candidates,title,hint):
 def search_content(content, hint):
 	contentLength = len(content)
 	candidates = []
-	for i in range(const.RESPONSE_LEN, contentLength - const.RESPONSE_LEN):
+	i = const.RESPONSE_LEN
+	while i < contentLength - const.RESPONSE_LEN:
 		candidate = content[i-const.RESPONSE_LEN:i+const.RESPONSE_LEN]
 		candidateLength = len(candidate)
 		middleBegin = int(((candidateLength/2) - (const.MIDDLE_LEN/2)))
@@ -87,6 +89,8 @@ def search_content(content, hint):
 		middle = candidate[middleBegin:middleEnd]
 		if middle.lower().find(hint.lower()) != -1:
 			candidates.append(candidate)
+			i += const.MIDDLE_LEN
+		i += 1
 	return candidates
 
 def proximity(candidate, title, hint):
@@ -191,5 +195,5 @@ def test_backend():
 		title = input("Please enter page title: ")
 		run_tests(title)
 
-#test_backend()
+test_backend()
 
