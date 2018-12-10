@@ -25,8 +25,15 @@ def main():
 	# Restart the user search and respond with the welcome message
 	elif(message.lower() == const.RESTART.lower()):
 		return sms_be.sms_welcome_message()
+	# Respond with the next occurance of the user's query
+	elif(message.lower() == const.NEXT.lower()):
+		return sms_be.sms_send_next(client, user)
+	elif(message.lower() == const.MORE.lower()):
+		return sms_be.sms_show_more(client, user)
+	# Respond with the link to the page name the user sent
 	elif(message.lower() == const.LINK.lower()):
 		return sms_be.sms_send_link(client, user, message_indicator)
+	# Respond with potential page names the user may want
 	elif(message_indicator == const.AMBIG_TITLE):
 		return sms_be.sms_ambig_reply(client, user, message)
 	# Respond with the sidebar parameters from the page name the user sent
