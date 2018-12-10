@@ -122,8 +122,6 @@ def sms_send_link(client, user, message_indicator):
 	if(message_indicator == const.RESULTS):
 		start = result_sms.find(const.TITLE) + const.TITLE_LENGTH
 		title = result_sms[start:result_sms.find(const.NEW_LINE, start)]
-	else:
-		title = user_sms[const.LINK_TITLE].body
 	link = be.wikipedia_url(title)
 	resp.message(str(compile_results(title, const.LINK, link, True)))
 	return str(resp)
