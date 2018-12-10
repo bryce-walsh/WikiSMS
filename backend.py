@@ -46,22 +46,16 @@ def check_sidebar(title, hint):
 
 # Searches the main text of the page and makes a best guess
 # as to what 160 char response is most likely to contain the information
-def search_main_text(title, hint, heading = None):
+# The optional index parameter specifies which rank in the results 
+# to be returned
+def search_main_text(title, hint, index = 0):
 	page = wikipedia.page(title)
-	if heading:
-		content = page.section(heading)
-		result = search_content(content, hint)
-		if result:
-			return result
-		else:
-			content = page.content
-	else:
-		content = page.content
+	content = page.content
 	candidates = search_content(content, hint)
 	pp.pprint(candidates)
 	sortedCandidates = sort_by_proximity(candidates, title, hint)
 	if sortedCandidates:
-		return sortedCandidates[0][0]
+		return sortedCandidates[index][0]
 	else:
 		return None
 	
@@ -93,6 +87,8 @@ def search_content(content, hint):
 		i += 1
 	return candidates
 
+# Returns the proximity (distance in letters) between
+# the given title and the given hint within the given candidate
 def proximity(candidate, title, hint):
 	candidate = candidate.lower()
 	hint = hint.lower()
@@ -112,8 +108,8 @@ def proximity(candidate, title, hint):
 		proximityRight = sys.maxsize
 	return min(proximityLeft, proximityRight)
 
-#Returns a dictionary where the keys are the parameters
-#of the given page's infobox and the values are the values
+# Returns a dictionary where the keys are the parameters
+# of the given page's infobox and the values are the values
 def parse_infobox(title):
 	page = wikipedia.page(title)
 	soup = BeautifulSoup(page.html, 'html.parser')
