@@ -86,6 +86,35 @@ def sms_send_link(client, user, message_indicator):
 	return str(resp)
 
 '''
+sms_ambig_reply function
+Parameters: string for the message the user just sent
+Returns: String for the response message to send to the front end
+Purpose: Sends sidebar parameters after the user clarifies the title
+'''
+def sms_ambig_reply(client, user, message):
+	resp = MessagingResponse()
+	user_messages = client.messages.list(from_=user)
+	title = user_messages[const.AMBIG_INDEX].body
+	try:
+		keywords = sorted(be.sidebar_parameters(title))
+	except Exception as error:
+		keywords = sorted(be.suggestions(title, error))
+	title = keywords[int(message)-const.INCREMENT]
+	keywords = sorted(be.sidebar_parameters(title))
+	opt = const.EMPTY
+	index = const.INCREMENT
+	for keyword in keywords:
+		opt = opt + str(index) + const.PERIOD + const.SPACE + keyword +\
+			  const.NEW_LINE
+		index += const.INCREMENT
+	opt = opt + const.LINK_MESSAGE + const.OTHER_MESSAGE
+	opt =  const.INFO + const.SPACE + const.NEW_LINE + const.TITLE + title +\
+		   const.NEW_LINE + const.BLURB + str(be.first_sentence(title)) +\
+		   const.NEW_LINE + const.INFO_MESSAGE + opt
+	resp.message(str(opt))
+	return str(resp)
+
+'''
 sms_goodbye_message function
 Parameters: None
 Returns: String for the response message to send to the front end
@@ -111,13 +140,25 @@ def sms_sidebar_reply(title):
 		options = const.EMPTY
 		index = const.INCREMENT
 		for keyword in keywords:
-			options = options + str(index) + const.PERIOD + const.SPACE + keyword + const.NEW_LINE
+			options = options + str(index) + const.PERIOD + const.SPACE +\
+			 		  keyword + const.NEW_LINE
 			index += const.INCREMENT
 		options = options + const.LINK_MESSAGE + const.OTHER_MESSAGE
-		options =  const.INFO + const.NEW_LINE + str(be.first_sentence(title)) + const.NEW_LINE + const.INFO_MESSAGE + options
+		options =  const.INFO + const.NEW_LINE + const.TITLE + title +\
+				   const.NEW_LINE + const.BLURB + str(be.first_sentence(title))\
+				   + const.NEW_LINE + const.INFO_MESSAGE + options
 		resp.message(str(options))
-	except:
-		resp.message(str(const.PAGE_NOT_FOUND))
+	except Exception as error:
+		keywords = sorted(be.suggestions(title, error))
+		index = const.INCREMENT
+		options = const.EMPTY
+		for keyword in keywords:
+			options = options + str(index) + const.PERIOD + const.SPACE +\
+					  keyword + const.NEW_LINE
+			index += const.INCREMENT
+		options = const.AMBIG_TITLE + const.AMBIG_MESSAGE + options
+		options = options[0:-1]
+		resp.message(str(options))
 	return str(resp)
 
 '''
@@ -133,8 +174,10 @@ def process_keyword(client, user, message):
 	if(message.lower() == const.OTHER.lower()):
 		return sms_get_query_reply()
 	else:
-		user_messages = client.messages.list(from_=user)
-		title = user_messages[const.INFO_TITLE].body
+		user_messages = client.messages.list(to=user)
+		title_sms = user_messages[const.INFO_TITLE].body
+		start = title_sms.find(const.TITLE) + const.TITLE_LENGTH
+		title = title_sms[start:title_sms.find(const.NEW_LINE, start)]
 		keywords = sorted(be.sidebar_parameters(title))
 		try:
 			keyword = keywords[int(message)-const.INCREMENT]
