@@ -15,6 +15,8 @@ OTHER = "OTHER"		# Keyword to distinguish is user is parsing main text
 RESTART = "Restart" # Keyword to restart the user search
 EXIT = "Exit"		# Keyword to quit the program
 LINK = "LINK"		# Keyword to send the user the link to the title page
+NEXT = "NEXT"		# Keyword to send the user the next occurance of their query
+MORE = "MORE"
 
 # Constants for instructional response messages to send to the user
 WELCOME_MESSAGE = "* \nWelcome to wikiSMS. Please respond with the name of"\
@@ -25,14 +27,20 @@ INFO_MESSAGE = "\nPlease respond with one of the following numbers:\n"
 QUERY_MESSAGE = "*** \nYou have selected the OTHER option. Please respond with"\
 			  + " the specific piece of information you are looking for."
 NO_INFO = " could not be found within the page for "
+SEARCH_AGAIN_NEXT = "\nPlease respond with:\nEXIT (if you are finished)\n"\
+				  + "RESTART (if you would like information from a new page)\n"\
+			 	  + "NEXT (to search for the next occurance of your query)\n"\
+			 	  + "MORE (to view more information on your result)\n"\
+			 	  + "or enter another keyword number."
 SEARCH_AGAIN = "\nPlease respond with:\nEXIT if you are finished\n"\
-			 + "RESTART if you would like information from a new page\n"\
+		     + "RESTART if you would like information from a new page\n"\
 			 + "or enter another keyword number."
 GOODBYE_MESSAGE = "Thank you for using WikiSMS."
 LINK_MESSAGE = "LINK (if you want the link to the title page)\n"
 OTHER_MESSAGE = "OTHER (if none of the above apply)"
 AMBIG_MESSAGE = " \nTitle is ambiguous. Please respond with one of the"\
 			  + " following numbers:\n"
+LAST_OCCURANCE = "There are no more occurances of your query."
 
 
 # Constants for array/string indices 
@@ -44,8 +52,8 @@ RESULT_TITLE = 0		# Index of SMS with the title when searching again
 RESULT_INDEX = 1		# Index of SMS with the potential last search's results
 TITLE_LENGTH = 6		# Int for the length of the title phrase
 INCREMENT = 1			# Int for the increment size of numbering
-LINK_TITLE = 1			# Index of SMS with the title when sending the title page link
-AMBIG_INDEX = 1
+LINK_TITLE = 1			# Index of SMS with the title when sending the page link
+AMBIG_INDEX = 1			# Index of SMS with the title after clarifying ambiguity
 
 # Miscellaneous Constants
 NEW_LINE = '\n'			# New line character 
