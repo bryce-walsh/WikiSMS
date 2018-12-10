@@ -23,7 +23,7 @@ WELCOME_MESSAGE = "* \nWelcome to wikiSMS. Please respond with the name of"\
 				+ " the page you would like to get information about."
 PAGE_NOT_FOUND = "* \nThe page you requested could not be found. "\
 			   + "Please respond with another page name."
-INFO_MESSAGE = "\nPlease respond with one of the following numbers:\n"
+INFO_MESSAGE = " \nPlease respond with one of the following numbers:\n"
 QUERY_MESSAGE = "*** \nYou have selected the OTHER option. Please respond with"\
 			  + " the specific piece of information you are looking for."
 NO_INFO = " could not be found within the page for "
