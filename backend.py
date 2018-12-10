@@ -52,12 +52,27 @@ def search_main_text(title, hint, index = 0):
 	page = wikipedia.page(title)
 	content = page.content
 	candidates = search_content(content, hint)
-	pp.pprint(candidates)
 	sortedCandidates = sort_by_proximity(candidates, title, hint)
 	if sortedCandidates:
 		return sortedCandidates[index][0]
 	else:
 		return None
+# Given the title of a page and the last_response given, gives the next 
+# response-length chunk of characters
+def read_more(title, last_response):
+	page = wikipedia.page(title)
+	content = page.content
+	contentLength = len(content)
+	responseLength = len(last_response)
+	halfResponseLen = responseLength // 2
+	for i in range(responseLength, contentLength - responseLength):
+		candidate = content[i-halfResponseLen:i+halfResponseLen]
+		if candidate == last_response:
+			result = content[i + halfResponseLen : (i + halfResponseLen) + const.RESPONSE_LEN]
+	if result:
+		return result
+	else:
+		return None 
 
 # Returns a list of (candidate, proximity) tuples, sorted by 
 # the proximity of the hint word to the title of the page
@@ -171,6 +186,14 @@ def test_proximity():
 		title = input("Title: ")
 		print(proximity(candidate, title, hint))
 
+# Test the read_more method
+def test_read_more(title):
+	hint = input("Please enter hint: ")
+	originalResponse = search_main_text(title, hint)
+	print("Original Response:" + originalResponse)
+	nextResponse = read_more(title, originalResponse)
+	print("Next Response:" + nextResponse)
+
 # Simulate the front end for backend testing
 def simulate_text(title):
 	print("These are the sidebar parameters for this page: ")
@@ -185,7 +208,8 @@ def simulate_text(title):
 def run_tests(title):
 	#test_suggestions(title)
 	#test_proximity()
-	simulate_text(title)
+	test_read_more(title)
+	#simulate_text(title)
 
 def test_backend():
 	while True:
