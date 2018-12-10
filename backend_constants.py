@@ -31,17 +31,21 @@ SEARCH_AGAIN = "\nPlease respond with:\nEXIT if you are finished\n"\
 GOODBYE_MESSAGE = "Thank you for using WikiSMS."
 LINK_MESSAGE = "LINK (if you want the link to the title page)\n"
 OTHER_MESSAGE = "OTHER (if none of the above apply)"
+AMBIG_MESSAGE = " \nTitle is ambiguous. Please respond with one of the"\
+			  + " following numbers:\n"
+
 
 # Constants for array/string indices 
 INDICATOR_INDEX = 0		# Index of message containing keyword for current step
 INDICATOR_STRING = 7	# Index of keyword in indicator message
-INFO_TITLE = 1			# Index of SMS with the title when parsing sidebar
+INFO_TITLE = 0			# Index of SMS with the title when parsing sidebar
 QUERY_TITLE = 2			# Index of SMS with the title when parsing main text
 RESULT_TITLE = 0		# Index of SMS with the title when searching again
 RESULT_INDEX = 1		# Index of SMS with the potential last search's results
 TITLE_LENGTH = 6		# Int for the length of the title phrase
 INCREMENT = 1			# Int for the increment size of numbering
 LINK_TITLE = 1			# Index of SMS with the title when sending the title page link
+AMBIG_INDEX = 1
 
 # Miscellaneous Constants
 NEW_LINE = '\n'			# New line character 
@@ -50,5 +54,6 @@ SPACE = ' '				# Char for an space character
 EMPTY = ''				# Char for an empty character
 PERIOD = '.'			# Char for a period character
 TITLE = "Page: "		# String for the title heading for the results sms
+BLURB = "Description: "	# String for the description heading
 QUERY = "Query: "		# String for the query heading for the results sms
 RESULT = "Result: "		# String for the results heading for the results sms
