@@ -94,6 +94,13 @@ def sms_send_next(client, user):
 	resp.message(str(response))
 	return str(resp)
 
+'''
+sms_send_more function
+Parameters: client object associated with the Twilio account
+			string for the user's phone number
+Returns: Messaging Response object to send back to the user
+Purpose: Send the next 320 characters to the user on their query
+'''
 def sms_show_more(client, user):
 	resp = MessagingResponse()
 	result_sms = client.messages.list(to=user)[const.RESULT_TITLE].body
