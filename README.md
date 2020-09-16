@@ -6,6 +6,8 @@ WikiSMS is a platform for browsing and retrieving information from Wikipedia thr
 The goal of this project is to provide access to the vast amount of information on Wikipedia to users without data plans.
 This project was created for the Computing for Developing Regions class at Tufts University in fall of 2018.
 
+A demo video demonstrating the use of this product is available at: https://www.youtube.com/watch?v=8NsuAiXydyk&
+
 ## Quick Start Guide
 
 The following guide describes how to get the server side of WikiSMS running on your machine:
